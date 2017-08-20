@@ -15,7 +15,7 @@ interface
 
 uses Windows,Messages,SysUtils,Classes,Graphics,Controls,Forms,Dialogs,
      MVCTypes,MVCPanel,StdCtrls,ExtCtrls,ImgList,VirtualTrees,ComCtrls,
-  Buttons;
+  Buttons, System.ImageList;
 
 type TfmMVCDemo=class(TForm)
        pnlControls:TPanel;
@@ -64,18 +64,21 @@ begin
   for i:=0 to 2 do
     with Result.Root.CreateChild do
       begin
+        {$IFDEF NEXTGEN} __ObjAddRef; {$ENDIF}
         Caption:='Root';
         SubCaption:='Number '+IntToStr(i);
         Incidence:=5+random(30);
         for j:=0 to 2 do
           with CreateChild do
             begin
+              {$IFDEF NEXTGEN} __ObjAddRef; {$ENDIF}
               Caption:='Child';
               SubCaption:='Number '+IntToStr(j);
               Incidence:=random(64);
               for k:=0 to 1 do
                 with CreateChild do
                   begin
+                    {$IFDEF NEXTGEN} __ObjAddRef; {$ENDIF}
                     Caption:='Grandchild';
                     SubCaption:='Number '+IntToStr(k);
                     Incidence:=random(64);

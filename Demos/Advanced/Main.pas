@@ -66,21 +66,7 @@ uses
 //----------------------------------------------------------------------------------------------------------------------
 
 procedure ConvertToHighColor(ImageList: TImageList);
-
-// To show smooth images we have to convert the image list from 16 colors to high color.
-
-var
-  IL: TImageList;
-
 begin
-  // Have to create a temporary copy of the given list, because the list is cleared on handle creation.
-  IL := TImageList.Create(nil);
-  IL.Assign(ImageList);
-
-  with ImageList do
-    Handle := ImageList_Create(Width, Height, ILC_COLOR16 or ILC_MASK, Count, AllocBy);
-  ImageList.Assign(IL);
-  IL.Free;
 end;
 
 //----------------------------------------------------------------------------------------------------------------------
@@ -95,7 +81,7 @@ var
   I: Integer;
 
 begin
-  Stream := TResourceStream.Create(0, Name, 'Unicode');
+  Stream := TResourceStream.Create(0, Name, RT_RCDATA);
   try
     Head := Stream.Memory;
     // Skip byte order mark.
@@ -179,7 +165,7 @@ begin
   if (ContainerPanel.ControlCount = 0) or not (ContainerPanel.Controls[0] is NewDemoClass) then
   begin
     if ContainerPanel.ControlCount > 0 then
-      ContainerPanel.Controls[0].Free;
+      ContainerPanel.Controls[0].DisposeOf;
 
     if Assigned(NewDemoClass) then
     begin

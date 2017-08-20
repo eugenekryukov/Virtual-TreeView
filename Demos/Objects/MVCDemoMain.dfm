@@ -25,9 +25,9 @@ object fmMVCDemo: TfmMVCDemo
     Caption = ' '
     TabOrder = 0
     object Label1: TLabel
-      Left = 51
+      Left = 49
       Top = 8
-      Width = 39
+      Width = 41
       Height = 13
       Alignment = taRightJustify
       Caption = 'Caption:'
@@ -41,9 +41,9 @@ object fmMVCDemo: TfmMVCDemo
       Caption = 'Subcaption:'
     end
     object Label4: TLabel
-      Left = 7
+      Left = 3
       Top = 56
-      Width = 83
+      Width = 87
       Height = 13
       Alignment = taRightJustify
       Caption = 'Incidence (0..63):'
@@ -51,8 +51,8 @@ object fmMVCDemo: TfmMVCDemo
     object Label2: TLabel
       Left = 212
       Top = 4
-      Width = 193
-      Height = 78
+      Width = 185
+      Height = 91
       Caption = 
         'Edit the current node.'#13#10#13#10'Note that you are setting data in a st' +
         'ructure without referring to a visual component except for the i' +
@@ -134,7 +134,7 @@ object fmMVCDemo: TfmMVCDemo
     Left = 120
     Top = 143
     Bitmap = {
-      494C010105000A00080010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010105000A000C0010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

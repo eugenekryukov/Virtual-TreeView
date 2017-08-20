@@ -1,9 +1,9 @@
 object MainForm: TMainForm
   Left = 220
   Top = 206
-  Width = 856
-  Height = 605
   Caption = 'Virtual Treeview features demo'
+  ClientHeight = 626
+  ClientWidth = 1026
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -19,15 +19,16 @@ object MainForm: TMainForm
   object Bevel1: TBevel
     Left = 0
     Top = 77
-    Width = 840
+    Width = 1026
     Height = 2
     Align = alTop
     Shape = bsTopLine
+    ExplicitWidth = 840
   end
   object PageScroller1: TPageScroller
     Left = 0
     Top = 0
-    Width = 840
+    Width = 1026
     Height = 77
     Align = alTop
     AutoScroll = True
@@ -37,6 +38,7 @@ object MainForm: TMainForm
     ParentShowHint = False
     ShowHint = True
     TabOrder = 0
+    ExplicitWidth = 840
     object MainPanel: TPanel
       Left = 0
       Top = 0
@@ -996,7 +998,7 @@ object MainForm: TMainForm
       object Label1: TLabel
         Left = 14
         Top = 28
-        Width = 72
+        Width = 71
         Height = 13
         Caption = 'Demo picker'
         Font.Charset = DEFAULT_CHARSET
@@ -1009,7 +1011,7 @@ object MainForm: TMainForm
       object Label2: TLabel
         Left = 22
         Top = 44
-        Width = 196
+        Width = 190
         Height = 16
         Caption = 'Which demo do you want to see?'
       end
@@ -1952,20 +1954,24 @@ object MainForm: TMainForm
   end
   object StatusBar: TStatusBar
     Left = 0
-    Top = 547
-    Width = 840
+    Top = 606
+    Width = 1026
     Height = 20
     AutoHint = True
     Panels = <>
     SimplePanel = True
+    ExplicitTop = 546
+    ExplicitWidth = 840
   end
   object ContainerPanel: TPanel
     Left = 0
     Top = 79
-    Width = 840
-    Height = 468
+    Width = 1026
+    Height = 527
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 2
+    ExplicitWidth = 840
+    ExplicitHeight = 467
   end
 end
