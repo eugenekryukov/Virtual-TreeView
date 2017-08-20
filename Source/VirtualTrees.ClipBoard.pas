@@ -252,6 +252,7 @@ begin
   Entry.TreeClass := AClass;
   Entry.Priority := Priority;
   Entry.FormatEtc := AFormatEtc;
+  {$IFDEF NEXTGEN}Entry.__ObjAddRef;{$ENDIF}
   List.Add(Entry);
 
   Sort;

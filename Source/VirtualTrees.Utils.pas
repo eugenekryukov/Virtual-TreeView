@@ -473,7 +473,10 @@ end;
 //----------------------------------------------------------------------------------------------------------------------
 
 procedure AlphaBlendLineConstant(Source, Destination: Pointer; Count: Integer; ConstantAlpha, Bias: Integer);
-
+{$IFNDEF MSWINDOWS}
+begin
+end;
+{$ELSE}
 // Blends a line of Count pixels from Source to Destination using a constant alpha value.
 // The layout of a pixel must be BGRA where A is ignored (but is calculated as the other components).
 // ConstantAlpha must be in the range 0..255 where 0 means totally transparent (destination pixel only)
@@ -604,10 +607,15 @@ asm
         POP     ESI
 end;
 {$endif CPUX64}
+{$ENDIF}
 
 //----------------------------------------------------------------------------------------------------------------------
 
 procedure AlphaBlendLinePerPixel(Source, Destination: Pointer; Count, Bias: Integer);
+{$IFNDEF MSWINDOWS}
+begin
+end;
+{$ELSE}
 
 // Blends a line of Count pixels from Source to Destination using the alpha value of the source pixels.
 // The layout of a pixel must be BGRA.
@@ -735,11 +743,15 @@ asm
         POP     ESI
 end;
 {$endif CPUX64}
+{$ENDIF}
 
 //----------------------------------------------------------------------------------------------------------------------
 
 procedure EMMS;
-
+{$IFNDEF MSWINDOWS}
+begin
+end;
+{$ELSE}
 // Reset MMX state to use the FPU for other tasks again.
 
 {$ifdef CPUX64}
@@ -751,11 +763,15 @@ asm
         DB      $0F, $77               /// EMMS
 end;
 {$endif CPUX64}
+{$ENDIF}
 
 //----------------------------------------------------------------------------------------------------------------------
 
 procedure AlphaBlendLineMaster(Source, Destination: Pointer; Count: Integer; ConstantAlpha, Bias: Integer);
-
+{$IFNDEF MSWINDOWS}
+begin
+end;
+{$ELSE}
 // Blends a line of Count pixels from Source to Destination using the source pixel and a constant alpha value.
 // The layout of a pixel must be BGRA.
 // ConstantAlpha must be in the range 0..255.
@@ -902,11 +918,15 @@ asm
         POP     ESI
 end;
 {$endif CPUX64}
+{$ENDIF}
 
 //----------------------------------------------------------------------------------------------------------------------
 
 procedure AlphaBlendLineMasterAndColor(Destination: Pointer; Count: Integer; ConstantAlpha, Color: Integer);
-
+{$IFNDEF MSWINDOWS}
+begin
+end;
+{$ELSE}
 // Blends a line of Count pixels in Destination against the given color using a constant alpha value.
 // The layout of a pixel must be BGRA and Color must be rrggbb00 (as stored by a COLORREF).
 // ConstantAlpha must be in the range 0..255.
@@ -1009,11 +1029,11 @@ asm
         JNZ     @1
 end;
 {$endif CPUX64}
+{$ENDIF}
 
 //----------------------------------------------------------------------------------------------------------------------
 
 procedure AlphaBlend(Source, Destination: HDC; R: TRect; Target: TPoint; Mode: TBlendMode; ConstantAlpha, Bias: Integer);
-
 // Optimized alpha blend procedure using MMX instructions to perform as quick as possible.
 // For this procedure to work properly it is important that both source and target bitmap use the 32 bit color format.
 // R describes the source rectangle to work on.
@@ -1043,8 +1063,9 @@ var
 begin
   if not IsRectEmpty(R) then
   begin
+    {$IFDEF MSWINDOWS}
     // Note: it is tempting to optimize the special cases for constant alpha 0 and 255 by just ignoring soure
-    //       (alpha = 0) or simply do a blit (alpha = 255). But this does not take the bias into account.
+    //       (alpha = 0) or simply do a blit (alpha = 255). But this does not take the bias into account.
     case Mode of
       bmConstantAlpha:
         begin
@@ -1114,6 +1135,8 @@ begin
           EMMS;
         end;
     end;
+    {$ELSE}
+    {$ENDIF}
   end;
 end;
 
@@ -1161,7 +1184,11 @@ end;
 //----------------------------------------------------------------------------------------------------------------------
 
 function HasMMX: Boolean;
-
+{$IFDEF MSWINDOWS}
+begin
+  Result := False;
+end;
+{$ELSE}
 // Helper method to determine whether the current processor supports MMX.
 
 {$ifdef CPUX64}
@@ -1199,6 +1226,7 @@ asm
         POP     EBX
 end;
 {$endif CPUX64}
+{$ENDIF}
 
 //----------------------------------------------------------------------------------------------------------------------
 

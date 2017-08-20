@@ -4208,7 +4208,7 @@ begin
       lImages.Handle := LoadBitmap(FindClassHInstance(TBaseVirtualTree), PChar(ImageName));
 
     try
-      Assert(lImages.Height > 0, 'Internal image "' + ImageName + '" is missing or corrupt.');
+//      Assert(lImages.Height > 0, 'Internal image "' + ImageName + '" is missing or corrupt.');
       if lImages.Height = 0 then
         Exit;// This should never happen, it prevents a division by zero exception below in the for loop, which we have seen in a few cases
       // It is assumed that the image height determines also the width of one entry in the image list.
@@ -6457,7 +6457,8 @@ begin
     OffsetRect(R, -Tree.FOffsetX, -Tree.FOffsetY);
 
     // Finally let the tree paint the relevant part and upate the drag image on screen.
-    PaintOptions := [poBackground, poColumnColor, poDrawFocusRect, poDrawDropMark, poDrawSelection, poGridLines];
+    PaintOptions := [poBackground, poColumnColor, poDrawFocusRect, poDrawDropMark, poDrawSelection, poGridLines
+      {$IFNDEF MSWINDOWS} ,poUnbuffered {$ENDIF}];
     with FBackImage do
     begin
       ClipRect.TopLeft := PaintTarget;
@@ -11531,7 +11532,7 @@ begin
     if Dummy > -1 then
     begin
       // Seek back to undo the read operation if this is an old stream format.
-      Seek(-SizeOf(Dummy), soFromCurrent);
+      Seek(-SizeOf(Dummy), soCurrent);
       Version := -1;
     end
     else // Read version number if this is a "versionized" format.
@@ -17807,7 +17808,7 @@ var
   TempRgn: HRGN;
   BorderWidth,
   BorderHeight: Integer;
- 
+
 begin
   if tsUseThemes in FStates then
   begin
@@ -17844,7 +17845,8 @@ begin
 
   if DC <> 0 then
   try
-    OriginalWMNCPaint(DC);
+//    OriginalWMNCPaint(DC);
+    FHeader.FColumns.PaintHeader(DC, FHeaderRect, -FEffectiveOffsetX);
   finally
     ReleaseDC(Handle, DC);
   end;
@@ -17878,7 +17880,7 @@ begin
     DC := GetDCEx(Handle, 0, DCX_CACHE or DCX_CLIPSIBLINGS or DCX_WINDOW or DCX_VALIDATE);
     if DC <> 0 then
       try
-        FHeader.FColumns.PaintHeader(DC, FHeaderRect, -FEffectiveOffsetX);
+//        FHeader.FColumns.PaintHeader(DC, FHeaderRect, -FEffectiveOffsetX);
     finally
       ReleaseDC(Handle, DC);
     end;
@@ -17932,7 +17934,8 @@ begin
     Canvas := TCanvas.Create;
     try
       Canvas.Handle := Message.DC;
-      PaintTree(Canvas, Window, Target, [poBackground, poDrawFocusRect, poDrawDropMark, poDrawSelection, poGridLines]);
+      PaintTree(Canvas, Window, Target, [poBackground, poDrawFocusRect, poDrawDropMark, poDrawSelection, poGridLines
+        {$IFNDEF MSWINDOWS} ,poUnbuffered {$ENDIF}]);
     finally
       Canvas.Handle := 0;
       Canvas.Free;
@@ -24153,7 +24156,8 @@ var
 
 begin
 
-  Options := [poBackground, poColumnColor, poDrawFocusRect, poDrawDropMark, poDrawSelection, poGridLines];
+  Options := [poBackground, poColumnColor, poDrawFocusRect, poDrawDropMark, poDrawSelection, poGridLines
+    {$IFNDEF MSWINDOWS} ,poUnbuffered {$ENDIF}];
   if UseRightToLeftAlignment and FHeader.UseColumns then
     RTLOffset := ComputeRTLOffset(True)
   else
@@ -24539,8 +24543,14 @@ begin
     if IntersectRect(BlendRect, OrderRect(SelectionRect), TargetRect) then
     begin
       OffsetRect(BlendRect, -WindowOrgX, 0);
+      {$ifdef mswindows}
       AlphaBlend(0, Target.Handle, BlendRect, Point(0, 0), bmConstantAlphaAndColor, FSelectionBlendFactor,
         ColorToRGB(FColors.SelectionRectangleBlendColor));
+      {$else}
+      Target.Brush.Style := bsSolid;
+      Target.Brush.Color := ColorToRGB(FColors.SelectionRectangleBlendColor);
+      FillRectWithAlpha(Target.Handle, @BlendRect, Target.Brush.Handle, FSelectionBlendFactor);
+      {$endif}
 
       Target.Brush.Color := FColors.SelectionRectangleBorderColor;
       Target.FrameRect(SelectionRect);
@@ -25353,9 +25363,9 @@ begin
   SetWindowRgn(FPanningWindow, CreateClipRegion, False);
 
   {$ifdef CPUX64}
-  SetWindowLongPtr(FPanningWindow, GWLP_WNDPROC, LONG_PTR(System.Classes.MakeObjectInstance(PanningWindowProc)));
+  SetWindowLongPtr(FPanningWindow, GWLP_WNDPROC, LONG_PTR(MakeObjectInstance(PanningWindowProc)));
   {$else}
-  SetWindowLong(FPanningWindow, GWL_WNDPROC, NativeInt(System.Classes.MakeObjectInstance(PanningWindowProc)));
+  SetWindowLong(FPanningWindow, GWL_WNDPROC, NativeInt(MakeObjectInstance(PanningWindowProc)));
   {$endif CPUX64}
   ShowWindow(FPanningWindow, SW_SHOWNOACTIVATE);
 
@@ -25390,7 +25400,7 @@ begin
     {$endif CPUX64}
     DestroyWindow(FPanningWindow);
     if Instance <> @DefWindowProc then
-      System.Classes.FreeObjectInstance(Instance);
+      FreeObjectInstance(Instance);
     FPanningWindow := 0;
     FPanningImage.Free;
     FPanningImage := nil;
@@ -25756,7 +25766,8 @@ const // Region identifiers for GetRandomRgn
   APIRGN = 3;
   SYSRGN = 4;
 
-function GetRandomRgn(DC: HDC; Rgn: HRGN; iNum: Integer): Integer; stdcall; external 'GDI32.DLL';
+function GetRandomRgn(DC: HDC; Rgn: HRGN; iNum: Integer): Integer; stdcall;
+  external {$IFDEF MSWINDOWS} 'GDI32.DLL' {$ELSE} CrossVclLib {$ENDIF};
 
 procedure TBaseVirtualTree.UpdateWindowAndDragImage(const Tree: TBaseVirtualTree; TreeRect: TRect; UpdateNCArea,
   ReshowDragImage: Boolean);
@@ -31188,7 +31199,10 @@ begin
             else
             begin
               // Consider here also colors of the columns.
-              SetCanvasOrigin(PaintInfo.Canvas, Target.X, 0); // This line caused issue #313 when it was placed above the if-statement
+              if not (poUnBuffered in PaintOptions) then
+                SetCanvasOrigin(PaintInfo.Canvas, Target.X, 0) // This line caused issue #313 when it was placed above the if-statement
+              else
+                SetCanvasOrigin(PaintInfo.Canvas, Target.X, -Target.Y); // This line caused issue #313 when it was placed above the if-statement
               if UseColumns then
               begin
                 with FHeader.FColumns do
@@ -31636,12 +31650,12 @@ type
   // needed to handle OLE global memory objects
   TOLEMemoryStream = class(TCustomMemoryStream)
   public
-    function Write(const Buffer; Count: Integer): Integer; override;
+    function Write(const Buffer; Count: System.Longint): System.Longint; override;
   end;
 
 //----------------------------------------------------------------------------------------------------------------------
 
-function TOLEMemoryStream.Write(const Buffer; Count: Integer): Integer;
+function TOLEMemoryStream.Write(const Buffer; Count: System.Longint): System.Longint;
 
 begin
   raise EStreamError.CreateRes(PResStringRec(@SCantWriteResourceStreamError));

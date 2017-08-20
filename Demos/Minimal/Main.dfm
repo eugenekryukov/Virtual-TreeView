@@ -94,7 +94,7 @@ object MainForm: TMainForm
     Height = 21
     Anchors = [akLeft, akBottom]
     TabOrder = 3
-    Text = '3'
+    Text = '100'
   end
   object Button1: TButton
     Tag = 1
