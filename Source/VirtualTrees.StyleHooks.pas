@@ -332,7 +332,10 @@ begin
       R := FVertScrollBarRect;
       R.Bottom := B.Height + FVertScrollBarRect.Top;
       Details := StyleServices.GetElementDetails(tsUpperTrackVertNormal);
-      StyleServices.DrawElement(B.Canvas.Handle, Details, R);
+      //StyleServices.DrawElement(B.Canvas.Handle, Details, R);
+      B.Canvas.Brush.Color := StyleServices.GetSystemColor(clBtnFace);
+      B.Canvas.FillRect(R);
+
       R.Top := FVertScrollBarUpButtonRect.Bottom;
       R.Bottom := FVertScrollBarDownButtonRect.Top;
 
