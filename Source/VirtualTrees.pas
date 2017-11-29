@@ -14110,6 +14110,7 @@ var
     begin
       SetSize(Size.cx, Size.cy);
 
+      {$IFDEF MSWINDOWS}
       if IsWinVistaOrAbove and (tsUseThemes in FStates) and (toUseExplorerTheme in FOptions.FPaintOptions) or VclStyleEnabled then
       begin
         if (FHeader.MainColumn > NoColumn) then
@@ -14124,6 +14125,7 @@ var
       TransparentColor := Brush.Color;
 
       FillRect(Rect(0, 0, Width, Height));
+      {$ENDIF}
     end;
   end;
 
