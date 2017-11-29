@@ -200,6 +200,7 @@ var
   ClipRegion: HRGN;
 
 begin
+  {$IFDEF MSWINDOWS}
   // Regions expect their coordinates in device coordinates, hence we have to transform the region rectangle.
   LPtoDP(Canvas.Handle, ClipRect, 2);
   ClipRegion := CreateRectRgnIndirect(ClipRect);
@@ -207,6 +208,7 @@ begin
     CombineRgn(ClipRegion, ClipRegion, VisibleRegion, RGN_AND);
   SelectClipRgn(Canvas.Handle, ClipRegion);
   DeleteObject(ClipRegion);
+  {$ENDIF}
 end;
 
 //----------------------------------------------------------------------------------------------------------------------

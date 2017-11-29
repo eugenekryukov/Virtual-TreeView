@@ -81,7 +81,7 @@ var
   I: Integer;
 
 begin
-  Stream := TResourceStream.Create(0, Name, RT_RCDATA);
+  Stream := TResourceStream.Create(HInstance, Name, RT_RCDATA);
   try
     Head := Stream.Memory;
     // Skip byte order mark.
