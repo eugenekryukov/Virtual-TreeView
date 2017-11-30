@@ -565,7 +565,7 @@ type
   TVTOperationKinds = set of TVTOperationKind;
 
 const
-  DefaultPaintOptions = [toShowButtons, toShowDropmark, toShowTreeLines, toShowRoot, toThemeAware, toUseBlendedImages];
+  DefaultPaintOptions = [toShowButtons, toShowDropmark, {$IFDEF MSWINDOWS} toShowTreeLines, {$ENDIF} toShowRoot, toThemeAware, toUseBlendedImages];
   DefaultAnimationOptions = [];
   DefaultAutoOptions = [toAutoDropExpand, toAutoTristateTracking, toAutoScrollOnExpand, toAutoDeleteMovedNodes, toAutoChangeScale, toAutoSort, toDisableAutoscrollOnFocus];
   DefaultSelectionOptions = [];
@@ -14110,7 +14110,6 @@ var
     begin
       SetSize(Size.cx, Size.cy);
 
-      {$IFDEF MSWINDOWS}
       if IsWinVistaOrAbove and (tsUseThemes in FStates) and (toUseExplorerTheme in FOptions.FPaintOptions) or VclStyleEnabled then
       begin
         if (FHeader.MainColumn > NoColumn) then
@@ -14119,13 +14118,12 @@ var
           Brush.Color := FColors.BackGroundColor;
       end
       else
-        Brush.Color := clFuchsia;
+        Brush.Color := RGB(128, 128, 128);
 
       Transparent := True;
       TransparentColor := Brush.Color;
 
       FillRect(Rect(0, 0, Width, Height));
-      {$ENDIF}
     end;
   end;
 
