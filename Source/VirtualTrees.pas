@@ -24440,6 +24440,7 @@ var
   NewStyles: TLineImage;
 
 begin
+  {$IFDEF MSWINDOWS}
   NewStyles := nil;
 
   with PaintInfo do
@@ -24509,6 +24510,7 @@ begin
       end;
     end;
   end;
+  {$ENDIF}
 end;
 
 //----------------------------------------------------------------------------------------------------------------------
