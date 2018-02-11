@@ -1,5 +1,5 @@
 # Virtual-TreeView for CrossVcl
-This fork has modification which allow to use Virtual-TreeView together with CrossVcl (http://www.crossvcl.com) to build VCL application dfor macOS and Linux using Delphi Tokyo.
+This fork has modification which allow to use Virtual-TreeView together with CrossVcl (http://www.crossvcl.com) to build VCL applications for macOS and Linux using Delphi Tokyo.
 ![Advanced](Screenshots/adv-linux.png)
 
 # Virtual-TreeView
