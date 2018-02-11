@@ -9074,12 +9074,20 @@ var
         Point(R.Left, R.Top), RTLOffset);
   end;
 
+var
+  Canvas: TCanvas;
 begin
   // Adjust size of the header bitmap
+  {$IFDEF MSWINDOWS}
   with TWithSafeRect(FHeader.Treeview.FHeaderRect) do
   begin
     FHeaderBitmap.SetSize(Max(Right, R.Right - R.Left), Bottom);
   end;
+  Canvas := FHeaderBitmap.Canvas;
+  {$ELSE}
+  Canvas := TCanvas.Create;
+  Canvas.Handle := DC;
+  {$ENDIF}
 
   VisibleFixedWidth := GetVisibleFixedWidth;
 
@@ -9088,22 +9096,27 @@ begin
     RTLOffset := FHeader.Treeview.ComputeRTLOffset
   else
     RTLOffset := 0;
-    
+
   if RTLOffset = 0 then
     PaintFixedArea;
 
   // Paint the floating part of the header.
-  PaintHeader(FHeaderBitmap.Canvas,
+  PaintHeader(Canvas,
     Rect(VisibleFixedWidth - HOffset, 0, R.Right + VisibleFixedWidth - HOffset, R.Bottom - R.Top),
     Point(R.Left + VisibleFixedWidth, R.Top), RTLOffset);
 
   // In case of right-to-left directionality we paint the fixed part last.
   if RTLOffset <> 0 then
     PaintFixedArea;
-  
+
   // Blit the result to target.
+  {$IFDEF MSWINDOWS}
   with TWithSafeRect(R) do
     BitBlt(DC, Left, Top, Right - Left, Bottom - Top, FHeaderBitmap.Canvas.Handle, Left, Top, SRCCOPY);
+  {$ELSE}
+  Canvas.Handle := 0;
+  Canvas.DisposeOf;
+  {$ENDIF}
 end;
 
 //----------------------------------------------------------------------------------------------------------------------
