@@ -24562,9 +24562,7 @@ begin
       AlphaBlend(0, Target.Handle, BlendRect, Point(0, 0), bmConstantAlphaAndColor, FSelectionBlendFactor,
         ColorToRGB(FColors.SelectionRectangleBlendColor));
       {$else}
-      Target.Brush.Style := bsSolid;
-      Target.Brush.Color := ColorToRGB(FColors.SelectionRectangleBlendColor);
-      FillRectWithAlpha(Target.Handle, @BlendRect, Target.Brush.Handle, FSelectionBlendFactor);
+      FillRectWithAlpha(Target.Handle, BlendRect, ColorToRGB(FColors.SelectionRectangleBlendColor), FSelectionBlendFactor);
       {$endif}
 
       Target.Brush.Color := FColors.SelectionRectangleBorderColor;
