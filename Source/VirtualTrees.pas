@@ -31121,7 +31121,9 @@ begin
                     else
                       NextColumn := GetNextVisibleColumn(PaintInfo.Column);
 
+                    {$IFDEF MSWINDOWS}
                     SelectClipRgn(PaintInfo.Canvas.Handle, 0);
+                    {$ENDIF}
                     // Stop column loop if there are no further columns in the given window.
                     if (PaintInfo.CellRect.Left >= Window.Right) or (NextColumn = InvalidColumn) then
                       Break;
