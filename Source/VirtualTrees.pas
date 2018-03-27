@@ -6476,15 +6476,21 @@ begin
         // Header is painted in this part only so when you use this routine and want
         // to capture the header in backup image, this flag should be ON.
         // For the non-client area we only need the visible region of the window as limit for painting.
+        {$IFDEF MSWINDOWS}
         SelectClipRgn(Canvas.Handle, VisibleRegion);
+        {$ENDIF}
         // Since WM_PRINT cannot be given a position where to draw we simply move the window origin and
         // get the same effect.
         GetWindowRect(Tree.Handle, ClipRect);
         SetCanvasOrigin(Canvas, DragRect.Left - ClipRect.Left, DragRect.Top - ClipRect.Top);
         Tree.Perform(WM_PRINT, WPARAM(Canvas.Handle), PRF_NONCLIENT);
+        {$IFNDEF MSWINDOWS}
         SetCanvasOrigin(Canvas, 0, 0);
+        {$ENDIF}
       end;
+      {$IFDEF MSWINDOWS}
       SelectClipRgn(Canvas.Handle, 0);
+      {$ENDIF}
 
       if ReshowDragImage then
       begin
@@ -9549,7 +9555,9 @@ begin
 
       PaintColumnHeader(Run, TargetRect);
 
+      {$IFDEF MSWINDOWS}
       SelectClipRgn(Handle, 0);
+      {$ENDIF}
       
       TargetRect.Left := TargetRect.Right;
       Run := GetNextVisibleColumn(Run);
